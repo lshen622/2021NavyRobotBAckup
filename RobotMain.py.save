@@ -1,0 +1,76 @@
+ccc
+from MotorModule import Motor
+from MotorModule_DTLever import Motor_DTLever
+from Servo_Module_v1 import Servo_Motor
+import KeyPressModule as kp
+import JoyStickModule as js
+from time import sleep
+from os import environ
+import pygame
+
+
+
+environ['DISPLAY'] = ':0'
+pygame.display.init()
+
+# Estblish Motor Objects (Pins)
+motor = Motor(2,3,4,22,27,17)
+motor_DTLever = Motor_DTLever(14,15,18)
+servo_motor = Servo_Motor(23)
+
+global current_angle
+current_angle = 3
+# Define Method of Control
+movement = 'JoyStick' #['KeyBoard','Joystick','DTLever']
+# movement = 'KeyBoard' #['KeyBoard','Joystick','DTLever']
+if movement == 'KeyBoard':
+    kp.init()
+
+
+###########################
+
+
+
+def main():
+    # print(kp.getKey('s'))
+    # motor.move(0.6,0,2)
+    # motor.stop(2)
+    global current_angle
+
+# movement = 'DTLever' #['KeyBoard','Joystick','DTLever']
+    if movement == 'JoyStick':
+#         jsVal = # js.getJS()
+
+        motor.move(-js.getJS()['axis2'],-js.getJS()['axis1'],0.1)
+#         print(js.getJS())
+        motor_DTLever.move(js.getJS()['R1'],js.getJS()['R2'],0.5,0.1)
+#         print(js.getJS())
+
+#         current_angle = servo_motor.move(js.getJS()['x'],js.getJS()['o'],current_angle,0.1)
+        print(js.getJS())
+
+#         print(js.getJS())
+        sleep(0.05)
+    elif movement == 'KeyBoard':
+        if kp.getKey('UP'):
+            motor.move(0.6,0,0.1)
+            print('Key UP was pressed')
+        elif kp.getKey('DOWN'):
+            motor.move(-0.6,0,0.1)
+            print('Key DOWN was pressed')
+        elif kp.getKey('LEFT'):
+            motor.move(0.5,0.3,0.1)
+            print('Key LEFT was pressed')
+        elif kp.getKey('RIGHT'):
+            motor.move(0.5,-0.3,0.1)
+            print('Key RIGHT was pressed')
+        else:
+            motor.stop(0.1)
+    else:
+        print('Set Type of Control')
+
+
+
+if __name__ == '__main__':
+    while True:
+        main()
